@@ -23,6 +23,9 @@ class Neuron:
         total = np.dot(self.weights, inputs) + self.bias
         return sigmoid(total)
     
+    def update_weights_and_bias(self, new_weights, new_bias):
+        self.weights = new_weights
+        self.bias = new_bias
 
 class NeuralNetwork:
     def __init__(self):
@@ -41,7 +44,7 @@ class NeuralNetwork:
         self.hidden2 = Neuron([self.w3, self.w4], self.b2)
         self.output = Neuron([self.w5, self.w6], self.b3)
 
-
+    
     def feedforward(self, input):
         ouput_hidden1 = self.hidden1.feedforward(input)
         ouput_hidden2 = self.hidden2.feedforward(input)
@@ -54,7 +57,7 @@ class NeuralNetwork:
     def train(self, input_data, real_output_data):
 
         learning_rate = 0.1 # 0.01 0.001
-        EPOCH = 100000
+        EPOCH = 1000
         for i in range(EPOCH): 
             for x, y_true in zip(input_data, real_output_data):
                 sum_hidden1 = self.w1 * x[0] + self.w2 * x[1] + self.b1
@@ -102,8 +105,14 @@ class NeuralNetwork:
                 self.w5 = self.w5 - learning_rate * derivata_y_prezis * derivata_w5_y_prezis
                 self.w6 = self.w6 - learning_rate * derivata_y_prezis * derivata_w6_y_prezis
                 self.b3 = self.b3 - learning_rate * derivata_y_prezis * derivata_b3_y_prezis
-                
 
+
+                self.hidden1.update_weights_and_bias([self.w1, self.w2], self.b1)    
+                self.hidden2.update_weights_and_bias([self.w3, self.w4], self.b2)    
+                self.output.update_weights_and_bias([self.w5, self.w6], self.b3)    
+                # self.hidden1 = Neuron([self.w1, self.w2], self.b1)
+                # self.hidden2 = Neuron([self.w3, self.w4], self.b2)
+                # self.output = Neuron([self.w5, self.w6], self.b3)
 
 
 
@@ -121,7 +130,8 @@ date_de_test = {
     "Florin" : [92, 183, False],
     "Emilia" : [62, 163, True],
     "George" : [77, 198, False],
-    "Iulia" : [58, 156, True]
+    "Iulia" : [58, 156, True],
+    "Ioana" : [66, 168, True]
 }
 
 
@@ -145,13 +155,9 @@ my_network = NeuralNetwork()
 my_network.train(input_data, real_output_data)
 
 
-
-
-
-
-for name in date_initiale:
-    individ = np.array(date_initiale[name][:2])
+for name in date_de_test:
+    individ = np.array(date_de_test[name][:2])
     individ = preprocesare(individ)
     print("Datele individului", individ)
     # ECHIVALENT lui predict
-    print(f"Probabilitatea {name} de a fi femeie este:", my_network.feedforward(individ))/Users/silviu/Desktop/ExercitiuNN/NN_masini.py
+    print(f"Probabilitatea {name} de a fi femeie este:", my_network.feedforward(individ))
